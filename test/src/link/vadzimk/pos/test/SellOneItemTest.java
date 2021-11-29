@@ -24,15 +24,22 @@ public class SellOneItemTest {
         sale.onBarcode("12345");
         assertEquals("8.0", display.getText());
     }
-
     @Test
-//    @Ignore("refactoring")
     public void anotherProductFound() {
         final Display display = new Display();
         final Sale sale = new Sale(display);
 
         sale.onBarcode("23456");
         assertEquals("12.50", display.getText());
+    }
+
+    @Test
+    public void productNotFound() {
+        final Display display = new Display();
+        final Sale sale = new Sale(display);
+
+        sale.onBarcode("9999");
+        assertEquals("product not found for 9999", display.getText());
     }
 
     static class Display {
@@ -60,6 +67,8 @@ public class SellOneItemTest {
                 display.setText("8.0");
             } else if("23456".equals(barcode)){
                 display.setText("12.50");
+            } else{
+                display.setText("product not found for 9999");
             }
         }
     }
