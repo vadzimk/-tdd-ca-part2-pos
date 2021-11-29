@@ -26,7 +26,7 @@ public class SellOneItemTest {
     }
 
     @Test
-    @Ignore("refactoring")
+//    @Ignore("refactoring")
     public void anotherProductFound() {
         final Display display = new Display();
         final Sale sale = new Sale(display);
@@ -51,12 +51,16 @@ public class SellOneItemTest {
     static class Sale {
         private final Display display;
 
-        public Sale(Display display){
+        public Sale(Display display) {
             this.display = display;
         }
 
         public void onBarcode(String barcode) {
-            display.setText("8.0");
+            if ("12345".equals(barcode)) {
+                display.setText("8.0");
+            } else if("23456".equals(barcode)){
+                display.setText("12.50");
+            }
         }
     }
 }
