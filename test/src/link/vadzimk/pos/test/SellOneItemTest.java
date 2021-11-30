@@ -18,11 +18,18 @@ import static org.junit.Assert.assertEquals;
  * null barcode
  * */
 
+
+
 public class SellOneItemTest {
+    static final Map<String, String>priceByBarcode = new HashMap<>() {{
+        put("12345", "8.0");
+        put("23456", "12.50");
+    }};
+
     @Test
     public void productFound() {
         final Display display = new Display();
-        final Sale sale = new Sale(display);
+        final Sale sale = new Sale(display, priceByBarcode);
 
         sale.onBarcode("12345");
         assertEquals("8.0", display.getText());
@@ -31,7 +38,7 @@ public class SellOneItemTest {
     @Test
     public void anotherProductFound() {
         final Display display = new Display();
-        final Sale sale = new Sale(display);
+        final Sale sale = new Sale(display, priceByBarcode);
 
         sale.onBarcode("23456");
         assertEquals("12.50", display.getText());
@@ -40,7 +47,7 @@ public class SellOneItemTest {
     @Test
     public void productNotFound() {
         final Display display = new Display();
-        final Sale sale = new Sale(display);
+        final Sale sale = new Sale(display, priceByBarcode);
 
         sale.onBarcode("9999");
         assertEquals("product not found for 9999", display.getText());
@@ -49,7 +56,7 @@ public class SellOneItemTest {
     @Test
     public void emptyBarcode() {
         final Display display = new Display();
-        final Sale sale = new Sale(display);
+        final Sale sale = new Sale(display, priceByBarcode);
 
         sale.onBarcode("");
         assertEquals("Scanning error: empty barcode", display.getText());
@@ -72,12 +79,9 @@ public class SellOneItemTest {
         private final Display display;
         private final Map<String, String> priceByBarcode;
 
-        public Sale(Display display) {
+        public Sale(Display display,  Map<String,String>priceByBarcode) {
             this.display = display;
-            this.priceByBarcode = new HashMap<>() {{
-                put("12345", "8.0");
-                put("23456", "12.50");
-            }};
+            this.priceByBarcode = priceByBarcode;
         }
 
         public void onBarcode(String barcode) {
