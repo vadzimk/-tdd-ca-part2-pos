@@ -19,9 +19,8 @@ import static org.junit.Assert.assertEquals;
  * */
 
 
-
 public class SellOneItemTest {
-    static final Map<String, String>priceByBarcode = new HashMap<>() {{
+    static final Map<String, String> priceByBarcode = new HashMap<>() {{
         put("12345", "8.0");
         put("23456", "12.50");
     }};
@@ -79,23 +78,24 @@ public class SellOneItemTest {
         private final Display display;
         private final Map<String, String> priceByBarcode;
 
-        public Sale(Display display,  Map<String,String>priceByBarcode) {
+        public Sale(Display display, Map<String, String> priceByBarcode) {
             this.display = display;
             this.priceByBarcode = priceByBarcode;
         }
 
         public void onBarcode(String barcode) {
-            if ("".equals(barcode)) {
+            if ("".equals(barcode)) {  // guard clause
                 display.setText("Scanning error: empty barcode");
-            } else {
-
-
-                if (priceByBarcode.containsKey(barcode)) {
-                    display.setText(priceByBarcode.get(barcode));
-                } else {
-                    display.setText("product not found for " + barcode);
-                }
+                return;
             }
+
+
+            if (priceByBarcode.containsKey(barcode)) {
+                display.setText(priceByBarcode.get(barcode));
+            } else {
+                display.setText("product not found for " + barcode);
+            }
+
         }
     }
 }
