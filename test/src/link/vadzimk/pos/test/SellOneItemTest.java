@@ -27,7 +27,7 @@ public class SellOneItemTest {
     @Before
     public void setUp() {
         display = new Display();
-        sale = new Sale(display, new HashMap<String, String>() {{
+        sale = new Sale(display, new HashMap<>() {{
             put("12345", "8.0");
             put("23456", "12.50");
         }});
@@ -81,17 +81,29 @@ public class SellOneItemTest {
         public void onBarcode(String barcode) {
             // refused request, move this up the call stack?
             if ("".equals(barcode)) {  // guard clause
-                display.setText("Scanning error: empty barcode");
+                displayEmptyBarcodeMsg();
                 return;
             }
 
 
             if (priceByBarcode.containsKey(barcode)) {
-                display.setText(priceByBarcode.get(barcode));
+                displayPrice(barcode);
             } else {
-                display.setText("product not found for " + barcode);
+                displayProductNotFoundMsg(barcode);
             }
 
+        }
+
+        private void displayPrice(String barcode) {
+            display.setText(priceByBarcode.get(barcode));
+        }
+
+        private void displayProductNotFoundMsg(String barcode) {
+            display.setText("product not found for " + barcode);
+        }
+
+        private void displayEmptyBarcodeMsg() {
+            display.setText("Scanning error: empty barcode");
         }
     }
 }
