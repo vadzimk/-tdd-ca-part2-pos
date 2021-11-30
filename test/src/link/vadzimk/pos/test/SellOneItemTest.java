@@ -3,6 +3,9 @@ package link.vadzimk.pos.test;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 
 /*
@@ -24,6 +27,7 @@ public class SellOneItemTest {
         sale.onBarcode("12345");
         assertEquals("8.0", display.getText());
     }
+
     @Test
     public void anotherProductFound() {
         final Display display = new Display();
@@ -40,6 +44,15 @@ public class SellOneItemTest {
 
         sale.onBarcode("9999");
         assertEquals("product not found for 9999", display.getText());
+    }
+
+    @Test
+    public void emptyBarcode() {
+        final Display display = new Display();
+        final Sale sale = new Sale(display);
+
+        sale.onBarcode("");
+        assertEquals("Scanning error: empty barcode", display.getText());
     }
 
     static class Display {
@@ -63,12 +76,19 @@ public class SellOneItemTest {
         }
 
         public void onBarcode(String barcode) {
-            if ("12345".equals(barcode)) {
-                display.setText("8.0");
-            } else if("23456".equals(barcode)){
-                display.setText("12.50");
-            } else{
-                display.setText("product not found for " + barcode);
+            if ("".equals(barcode)) {
+                display.setText("Scanning error: empty barcode");
+            } else {
+                final Map<String, String> priceByBarcode = new HashMap<>() {{
+                    put("12345", "8.0");
+                    put("23456", "12.50");
+                }};
+
+                if (priceByBarcode.containsKey(barcode)) {
+                    display.setText(priceByBarcode.get(barcode));
+                }  else {
+                    display.setText("product not found for " + barcode);
+                }
             }
         }
     }
