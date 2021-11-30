@@ -1,5 +1,6 @@
 package link.vadzimk.pos.test;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,43 +21,38 @@ import static org.junit.Assert.assertEquals;
 
 
 public class SellOneItemTest {
-    static final Map<String, String> priceByBarcode = new HashMap<>() {{
-        put("12345", "8.0");
-        put("23456", "12.50");
-    }};
+    private Display display;
+    private Sale sale;
+
+    @Before
+    public void setUp() {
+        display = new Display();
+        sale = new Sale(display, new HashMap<String, String>() {{
+            put("12345", "8.0");
+            put("23456", "12.50");
+        }});
+    }
 
     @Test
     public void productFound() {
-        final Display display = new Display();
-        final Sale sale = new Sale(display, priceByBarcode);
-
         sale.onBarcode("12345");
         assertEquals("8.0", display.getText());
     }
 
     @Test
     public void anotherProductFound() {
-        final Display display = new Display();
-        final Sale sale = new Sale(display, priceByBarcode);
-
         sale.onBarcode("23456");
         assertEquals("12.50", display.getText());
     }
 
     @Test
     public void productNotFound() {
-        final Display display = new Display();
-        final Sale sale = new Sale(display, priceByBarcode);
-
         sale.onBarcode("9999");
         assertEquals("product not found for 9999", display.getText());
     }
 
     @Test
     public void emptyBarcode() {
-        final Display display = new Display();
-        final Sale sale = new Sale(display, null); // potentially priceByBarcode can be in a different class, single responsibility principle
-
         sale.onBarcode("");
         assertEquals("Scanning error: empty barcode", display.getText());
     }
@@ -65,7 +61,6 @@ public class SellOneItemTest {
         private String text;
 
         public String getText() {
-
             return text;
         }
 
