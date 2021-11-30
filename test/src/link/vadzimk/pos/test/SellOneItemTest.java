@@ -26,10 +26,10 @@ public class SellOneItemTest {
     @Before
     public void setUp() {
         display = new Display();
-        sale = new Sale(display, new HashMap<>() {{
+        sale = new Sale(display, new Catalog(new HashMap<>() {{
             put("12345", "8.0");
             put("23456", "12.50");
-        }});
+        }}));
     }
 
     @Test
@@ -83,13 +83,29 @@ public class SellOneItemTest {
         }
     }
 
-    static class Sale {
-        private final Display display;
+    static class Catalog {
         private final Map<String, String> priceByBarcode;
 
-        public Sale(Display display, Map<String, String> priceByBarcode) {
-            this.display = display;
+        public Catalog(Map<String, String> priceByBarcode){
             this.priceByBarcode = priceByBarcode;
+        }
+        private boolean hasBarcode(String barcode) {
+            return priceByBarcode.containsKey(barcode);
+        }
+
+        private String findPrice(String barcode) {
+            return priceByBarcode.get(barcode);
+        }
+
+    }
+
+    static class Sale {
+        private final Display display;
+        private final Catalog catalog;
+
+        public Sale(Display display, Catalog catalog) {
+            this.display = display;
+            this.catalog = catalog;
         }
 
         public void onBarcode(String barcode) {
@@ -99,23 +115,12 @@ public class SellOneItemTest {
                 return;
             }
 
-
-            String priceTxt = findPrice(barcode);
+            String priceTxt = catalog.findPrice(barcode);
             if (priceTxt != null) {
                 display.displayPrice(priceTxt);
             } else {
                 display.displayProductNotFoundMsg(barcode);
             }
-
         }
-
-        private boolean hasBarcode(String barcode) {
-            return priceByBarcode.containsKey(barcode);
-        }
-
-        private String findPrice(String barcode) {
-            return priceByBarcode.get(barcode);
-        }
-
     }
 }
