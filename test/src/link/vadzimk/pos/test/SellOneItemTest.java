@@ -55,7 +55,7 @@ public class SellOneItemTest {
     @Test
     public void emptyBarcode() {
         final Display display = new Display();
-        final Sale sale = new Sale(display, priceByBarcode);
+        final Sale sale = new Sale(display, null); // potentially priceByBarcode can be in a different class, single responsibility principle
 
         sale.onBarcode("");
         assertEquals("Scanning error: empty barcode", display.getText());
@@ -84,6 +84,7 @@ public class SellOneItemTest {
         }
 
         public void onBarcode(String barcode) {
+            // refused request, move this up the call stack?
             if ("".equals(barcode)) {  // guard clause
                 display.setText("Scanning error: empty barcode");
                 return;
