@@ -1,7 +1,6 @@
 package link.vadzimk.pos.test;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -67,6 +66,21 @@ public class SellOneItemTest {
         public void setText(String text) {
             this.text = text;
         }
+
+        // should go to display
+        public void displayPrice(String priceTxt) {
+            setText(priceTxt);
+        }
+
+        // should go to display
+        public void displayProductNotFoundMsg(String barcode) {
+            setText("product not found for " + barcode);
+        }
+
+        // should go to display
+        public void displayEmptyBarcodeMsg() {
+            setText("Scanning error: empty barcode");
+        }
     }
 
     static class Sale {
@@ -81,16 +95,16 @@ public class SellOneItemTest {
         public void onBarcode(String barcode) {
             // refused request, move this up the call stack?
             if ("".equals(barcode)) {  // guard clause
-                displayEmptyBarcodeMsg();
+                display.displayEmptyBarcodeMsg();
                 return;
             }
 
 
             String priceTxt = findPrice(barcode);
             if (priceTxt != null) {
-                displayPrice(priceTxt);
+                display.displayPrice(priceTxt);
             } else {
-                displayProductNotFoundMsg(barcode);
+                display.displayProductNotFoundMsg(barcode);
             }
 
         }
@@ -103,16 +117,5 @@ public class SellOneItemTest {
             return priceByBarcode.get(barcode);
         }
 
-        private void displayPrice(String priceTxt) {
-            display.setText(priceTxt);
-        }
-
-        private void displayProductNotFoundMsg(String barcode) {
-            display.setText("product not found for " + barcode);
-        }
-
-        private void displayEmptyBarcodeMsg() {
-            display.setText("Scanning error: empty barcode");
-        }
     }
 }
